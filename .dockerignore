@@ -1,0 +1,10 @@
+.git
+.gitea
+.idea
+.mvn/wrapper/maven-wrapper.jar
+target
+build
+.env
+*.iml
+*.log
+HELP.md
