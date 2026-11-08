@@ -1,0 +1,31 @@
+services:
+  docker-telegram-bot:
+    image: ${DOCKER_IMAGE:-unraid-telegram-bot:latest}
+    build:
+      context: .
+    container_name: docker-telegram-bot
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/docker_bot_db}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-docker_bot}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+      APP_INITIAL_ADMIN_TELEGRAM_ID: ${APP_INITIAL_ADMIN_TELEGRAM_ID:-}
+      APP_DOCKER_HOST: ${APP_DOCKER_HOST:-unix:///var/run/docker.sock}
+      APP_LOGS_MAX_LINES: ${APP_LOGS_MAX_LINES:-300}
+      APP_EXEC_ENABLED: ${APP_EXEC_ENABLED:-false}
+      APP_EXEC_TIMEOUT_SECONDS: ${APP_EXEC_TIMEOUT_SECONDS:-10}
+      APP_EXEC_ALLOW_SHELL: ${APP_EXEC_ALLOW_SHELL:-false}
+      APP_RESPONSE_MAX_CHARS: ${APP_RESPONSE_MAX_CHARS:-3500}
+      APP_DOCKER_DENYLIST: ${APP_DOCKER_DENYLIST:-postgres,gitea,gitea-runner,docker-telegram-bot}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      - "${DOCKER_GID:-281}"
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
